@@ -31,7 +31,7 @@ const Dashboard = () => {
       color: 'bg-yellow-50 border-yellow-100'
     },
     { 
-      title: 'Completed', 
+      title: 'Selesai', 
       value: 77, 
       change: 5, 
       isPositive: true,
@@ -39,7 +39,7 @@ const Dashboard = () => {
       color: 'bg-blue-50 border-blue-100'
     },
     { 
-      title: 'Unique Views', 
+      title: 'Dilihat', 
       value: 91, 
       change: 8, 
       isPositive: false,
@@ -47,7 +47,7 @@ const Dashboard = () => {
       color: 'bg-pink-50 border-pink-100'
     },
     { 
-      title: 'Total Users', 
+      title: 'Total Pengguna', 
       value: 126, 
       change: 28, 
       isPositive: true,
@@ -125,7 +125,7 @@ const Dashboard = () => {
         {/* Greeting section */}
         <div className="bg-blue-100 rounded-2xl p-6 flex items-center justify-between overflow-hidden relative animate-fade-in">
           <div className="z-10">
-            <h1 className="text-3xl font-bold mb-2">Hi, Admin</h1>
+            <h1 className="text-3xl font-bold mb-2">Hai, Admin</h1>
             <p className="text-gray-600">Selamat datang kembali di dashboard Daarul Ilmi Collection Manager</p>
           </div>
           
@@ -222,10 +222,12 @@ const Dashboard = () => {
             ))}
             
             <div className="flex justify-center mt-6">
-              <Button variant="outline" className="flex items-center">
-                <span>Lihat Semua Feedback</span>
-                <ChevronRightIcon className="w-4 h-4 ml-1" />
-              </Button>
+              <Link to="/feedbacks">
+                <Button variant="outline" className="flex items-center">
+                  <span>Lihat Semua Feedback</span>
+                  <ChevronRightIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

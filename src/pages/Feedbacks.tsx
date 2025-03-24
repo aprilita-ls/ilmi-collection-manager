@@ -174,7 +174,7 @@ const Feedbacks = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter berdasarkan Rating</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setRatingFilter(null)}>
                   Semua Rating
@@ -251,7 +251,7 @@ const Feedbacks = () => {
         <div className="mt-6 text-center">
           <Link to="/all-feedbacks">
             <Button variant="outline" className="w-full sm:w-auto">
-              LIHAT SEMUA HALAMAN FEEDBACK
+              LIHAT SEMUA KATEGORI FEEDBACK
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

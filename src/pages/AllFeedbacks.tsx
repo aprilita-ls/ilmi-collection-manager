@@ -1,17 +1,12 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Filter, Search, MessageSquare, Tabs } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Filter, Search, BarChart2 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Tabs as TabsComponent,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -93,7 +88,6 @@ const AllFeedbacks = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState('all');
   
   // Format date
   const formatDate = (dateString: string) => {
@@ -123,14 +117,13 @@ const AllFeedbacks = () => {
         return feedback.rating === ratingFilter;
       }
       return true;
-    })
-    .filter(feedback => {
-      // Apply category filter based on active tab
-      if (activeTab !== 'all') {
-        return feedback.category === activeTab;
-      }
-      return true;
     });
+
+  // Group feedback by category
+  const videoFeedback = filteredFeedback.filter(feedback => feedback.category === 'video');
+  const audioFeedback = filteredFeedback.filter(feedback => feedback.category === 'audio');
+  const hadistFeedback = filteredFeedback.filter(feedback => feedback.category === 'hadist');
+  const generalFeedback = filteredFeedback.filter(feedback => feedback.category === 'general');
 
   const renderStars = (rating: number) => {
     return Array(5).fill(0).map((_, index) => (
@@ -145,22 +138,34 @@ const AllFeedbacks = () => {
     ));
   };
 
-  const getTabStats = () => {
-    const videoCount = mockFeedback.filter(f => f.category === 'video').length;
-    const audioCount = mockFeedback.filter(f => f.category === 'audio').length;
-    const hadistCount = mockFeedback.filter(f => f.category === 'hadist').length;
-    const generalCount = mockFeedback.filter(f => f.category === 'general').length;
-    
-    return {
-      all: mockFeedback.length,
-      video: videoCount,
-      audio: audioCount,
-      hadist: hadistCount,
-      general: generalCount
-    };
-  };
-
-  const stats = getTabStats();
+  // Render feedback card
+  const renderFeedbackCard = (feedback: any) => (
+    <Card key={feedback.id} className="p-4 hover:shadow-md transition-shadow">
+      <div className="flex justify-between mb-2">
+        <h3 className="font-medium">{feedback.name}</h3>
+        <span className="text-sm text-gray-500">{formatDate(feedback.date)}</span>
+      </div>
+      <div className="flex mb-3">
+        {renderStars(feedback.rating)}
+      </div>
+      <p className="text-gray-700">{feedback.comment}</p>
+      {feedback.category && (
+        <div className="mt-3">
+          <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+            feedback.category === 'video' 
+              ? 'bg-blue-100 text-blue-800' 
+              : feedback.category === 'audio'
+              ? 'bg-green-100 text-green-800'
+              : feedback.category === 'hadist'
+              ? 'bg-purple-100 text-purple-800'
+              : 'bg-gray-100 text-gray-800'
+          }`}>
+            {feedback.category}
+          </span>
+        </div>
+      )}
+    </Card>
+  );
 
   return (
     <DashboardLayout>
@@ -176,42 +181,20 @@ const AllFeedbacks = () => {
               >
                 <ArrowLeft className="h-5 w-5 mr-1" />
               </Button>
-              <h1 className="text-2xl font-bold">Semua Ulasan</h1>
+              <h1 className="text-2xl font-bold">Semua Kategori Feedback</h1>
             </div>
-            <p className="text-gray-500 mt-1">Lihat semua ulasan berdasarkan kategori</p>
+            <p className="text-gray-500 mt-1">Lihat semua feedback dikelompokkan berdasarkan kategori</p>
           </div>
           <div className="p-3 bg-blue-100 rounded-full">
-            <MessageSquare className="w-6 h-6 text-daarul-blue" />
+            <BarChart2 className="w-6 h-6 text-daarul-blue" />
           </div>
-        </div>
-        
-        <div className="mb-8">
-          <TabsComponent defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full justify-start overflow-x-auto bg-white border-b p-0 h-auto">
-              <TabsTrigger value="all" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
-                Semua <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.all}</span>
-              </TabsTrigger>
-              <TabsTrigger value="video" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
-                Video <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.video}</span>
-              </TabsTrigger>
-              <TabsTrigger value="audio" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
-                Audio <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.audio}</span>
-              </TabsTrigger>
-              <TabsTrigger value="hadist" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
-                Hadist <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.hadist}</span>
-              </TabsTrigger>
-              <TabsTrigger value="general" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
-                Umum <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.general}</span>
-              </TabsTrigger>
-            </TabsList>
-          </TabsComponent>
         </div>
         
         <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Cari ulasan..."
+              placeholder="Cari feedback..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -226,7 +209,7 @@ const AllFeedbacks = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
+              <DropdownMenuLabel>Filter berdasarkan Rating</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setRatingFilter(null)}>
                 Semua Rating
@@ -256,41 +239,66 @@ const AllFeedbacks = () => {
           </DropdownMenu>
         </div>
         
-        <div className="space-y-4">
-          {filteredFeedback.length > 0 ? (
-            filteredFeedback.map(feedback => (
-              <Card key={feedback.id} className="p-4 hover:shadow-md transition-shadow">
-                <div className="flex justify-between mb-2">
-                  <h3 className="font-medium">{feedback.name}</h3>
-                  <span className="text-sm text-gray-500">{formatDate(feedback.date)}</span>
-                </div>
-                <div className="flex mb-3">
-                  {renderStars(feedback.rating)}
-                </div>
-                <p className="text-gray-700">{feedback.comment}</p>
-                {feedback.category && (
-                  <div className="mt-3">
-                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                      feedback.category === 'video' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : feedback.category === 'audio'
-                        ? 'bg-green-100 text-green-800'
-                        : feedback.category === 'hadist'
-                        ? 'bg-purple-100 text-purple-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {feedback.category === 'general' ? 'umum' : feedback.category}
-                    </span>
-                  </div>
-                )}
-              </Card>
-            ))
-          ) : (
-            <div className="text-center py-10 bg-gray-50 rounded-lg">
-              <p className="text-gray-500">Tidak ada ulasan yang ditemukan</p>
-            </div>
-          )}
-        </div>
+        <Tabs defaultValue="video" className="w-full">
+          <TabsList className="mb-6 w-full grid grid-cols-4">
+            <TabsTrigger value="video" className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+              Video ({videoFeedback.length})
+            </TabsTrigger>
+            <TabsTrigger value="audio" className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              Audio ({audioFeedback.length})
+            </TabsTrigger>
+            <TabsTrigger value="hadist" className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+              Hadist ({hadistFeedback.length})
+            </TabsTrigger>
+            <TabsTrigger value="general" className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-gray-500"></span>
+              Umum ({generalFeedback.length})
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="video" className="space-y-4">
+            {videoFeedback.length > 0 ? (
+              videoFeedback.map(renderFeedbackCard)
+            ) : (
+              <div className="text-center py-10 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">Tidak ada feedback video yang ditemukan</p>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="audio" className="space-y-4">
+            {audioFeedback.length > 0 ? (
+              audioFeedback.map(renderFeedbackCard)
+            ) : (
+              <div className="text-center py-10 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">Tidak ada feedback audio yang ditemukan</p>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="hadist" className="space-y-4">
+            {hadistFeedback.length > 0 ? (
+              hadistFeedback.map(renderFeedbackCard)
+            ) : (
+              <div className="text-center py-10 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">Tidak ada feedback hadist yang ditemukan</p>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="general" className="space-y-4">
+            {generalFeedback.length > 0 ? (
+              generalFeedback.map(renderFeedbackCard)
+            ) : (
+              <div className="text-center py-10 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">Tidak ada feedback umum yang ditemukan</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );

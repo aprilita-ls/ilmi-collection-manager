@@ -11,8 +11,8 @@ const Sidebar = () => {
     { title: 'Tambah Koleksi', path: '/tambah-koleksi', icon: <PlusCircle className="w-5 h-5" /> },
     { title: 'Lihat Koleksi', path: '/lihat-koleksi', icon: <List className="w-5 h-5" /> },
     { title: 'Edit Koleksi', path: '/edit-koleksi', icon: <Edit className="w-5 h-5" /> },
-    { title: 'Statistics', path: '/statistics', icon: <BarChart className="w-5 h-5" /> },
-    { title: 'Settings', path: '/settings', icon: <Settings className="w-5 h-5" /> },
+    { title: 'Statistik', path: '/statistics', icon: <BarChart className="w-5 h-5" /> },
+    { title: 'Pengaturan', path: '/settings', icon: <Settings className="w-5 h-5" /> },
   ];
 
   return (
@@ -40,7 +40,7 @@ const Sidebar = () => {
       <div className="mt-auto pt-4 border-t">
         <button className="menu-item w-full text-red-500 justify-start">
           <LogOut className="w-5 h-5" />
-          <span>Logout</span>
+          <span>Keluar</span>
         </button>
       </div>
     </div>
