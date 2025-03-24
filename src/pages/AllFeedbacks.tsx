@@ -1,11 +1,17 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Filter, Search, MessageSquare, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Filter, Search, MessageSquare, Tabs } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  Tabs as TabsComponent,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,10 +89,11 @@ const mockFeedback = [
   }
 ];
 
-const Feedbacks = () => {
+const AllFeedbacks = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState('all');
   
   // Format date
   const formatDate = (dateString: string) => {
@@ -116,6 +123,13 @@ const Feedbacks = () => {
         return feedback.rating === ratingFilter;
       }
       return true;
+    })
+    .filter(feedback => {
+      // Apply category filter based on active tab
+      if (activeTab !== 'all') {
+        return feedback.category === activeTab;
+      }
+      return true;
     });
 
   const renderStars = (rating: number) => {
@@ -131,6 +145,23 @@ const Feedbacks = () => {
     ));
   };
 
+  const getTabStats = () => {
+    const videoCount = mockFeedback.filter(f => f.category === 'video').length;
+    const audioCount = mockFeedback.filter(f => f.category === 'audio').length;
+    const hadistCount = mockFeedback.filter(f => f.category === 'hadist').length;
+    const generalCount = mockFeedback.filter(f => f.category === 'general').length;
+    
+    return {
+      all: mockFeedback.length,
+      video: videoCount,
+      audio: audioCount,
+      hadist: hadistCount,
+      general: generalCount
+    };
+  };
+
+  const stats = getTabStats();
+
   return (
     <DashboardLayout>
       <div>
@@ -140,76 +171,89 @@ const Feedbacks = () => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/feedbacks')}
                 className="p-0 hover:bg-transparent"
               >
                 <ArrowLeft className="h-5 w-5 mr-1" />
               </Button>
-              <h1 className="text-2xl font-bold">Semua Feedback</h1>
+              <h1 className="text-2xl font-bold">Semua Ulasan</h1>
             </div>
-            <p className="text-gray-500 mt-1">Lihat semua feedback dari pengguna</p>
+            <p className="text-gray-500 mt-1">Lihat semua ulasan berdasarkan kategori</p>
           </div>
           <div className="p-3 bg-blue-100 rounded-full">
             <MessageSquare className="w-6 h-6 text-daarul-blue" />
           </div>
         </div>
         
+        <div className="mb-8">
+          <TabsComponent defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="w-full justify-start overflow-x-auto bg-white border-b p-0 h-auto">
+              <TabsTrigger value="all" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
+                Semua <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.all}</span>
+              </TabsTrigger>
+              <TabsTrigger value="video" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
+                Video <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.video}</span>
+              </TabsTrigger>
+              <TabsTrigger value="audio" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
+                Audio <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.audio}</span>
+              </TabsTrigger>
+              <TabsTrigger value="hadist" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
+                Hadist <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.hadist}</span>
+              </TabsTrigger>
+              <TabsTrigger value="general" className="py-3 px-5 rounded-none data-[state=active]:bg-blue-50 border-b-2 data-[state=active]:border-daarul-blue data-[state=active]:shadow-none">
+                Umum <span className="ml-2 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{stats.general}</span>
+              </TabsTrigger>
+            </TabsList>
+          </TabsComponent>
+        </div>
+        
         <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Cari feedback..."
+              placeholder="Cari ulasan..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
           
-          <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-1">
-                  <Filter className="h-4 w-4" />
-                  <span>Filter</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setRatingFilter(null)}>
-                  Semua Rating
-                </DropdownMenuItem>
-                {[5, 4, 3, 2, 1].map(rating => (
-                  <DropdownMenuItem 
-                    key={rating} 
-                    onClick={() => setRatingFilter(rating)}
-                    className="flex items-center gap-2"
-                  >
-                    <div className="flex">
-                      {Array(5).fill(0).map((_, index) => (
-                        <svg 
-                          key={index} 
-                          className={`w-4 h-4 ${index < rating ? 'text-yellow-400' : 'text-gray-300'}`} 
-                          fill="currentColor" 
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.799-2.034c-.784-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                        </svg>
-                      ))}
-                    </div>
-                    <span>({rating} bintang)</span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <Link to="/all-feedbacks">
-              <Button variant="default" size="sm" className="flex items-center gap-1">
-                <span>Lihat Berdasarkan Kategori</span>
-                <ChevronRight className="h-4 w-4" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <Filter className="h-4 w-4" />
+                <span>Filter</span>
               </Button>
-            </Link>
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setRatingFilter(null)}>
+                Semua Rating
+              </DropdownMenuItem>
+              {[5, 4, 3, 2, 1].map(rating => (
+                <DropdownMenuItem 
+                  key={rating} 
+                  onClick={() => setRatingFilter(rating)}
+                  className="flex items-center gap-2"
+                >
+                  <div className="flex">
+                    {Array(5).fill(0).map((_, index) => (
+                      <svg 
+                        key={index} 
+                        className={`w-4 h-4 ${index < rating ? 'text-yellow-400' : 'text-gray-300'}`} 
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.799-2.034c-.784-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                      </svg>
+                    ))}
+                  </div>
+                  <span>({rating} bintang)</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         <div className="space-y-4">
@@ -235,7 +279,7 @@ const Feedbacks = () => {
                         ? 'bg-purple-100 text-purple-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {feedback.category}
+                      {feedback.category === 'general' ? 'umum' : feedback.category}
                     </span>
                   </div>
                 )}
@@ -243,22 +287,13 @@ const Feedbacks = () => {
             ))
           ) : (
             <div className="text-center py-10 bg-gray-50 rounded-lg">
-              <p className="text-gray-500">Tidak ada feedback yang ditemukan</p>
+              <p className="text-gray-500">Tidak ada ulasan yang ditemukan</p>
             </div>
           )}
-        </div>
-        
-        <div className="mt-6 text-center">
-          <Link to="/all-feedbacks">
-            <Button variant="outline" className="w-full sm:w-auto">
-              LIHAT SEMUA HALAMAN FEEDBACK
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
         </div>
       </div>
     </DashboardLayout>
   );
 };
 
-export default Feedbacks;
+export default AllFeedbacks;

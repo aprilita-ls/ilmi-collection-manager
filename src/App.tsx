@@ -10,6 +10,7 @@ import TambahKoleksi from "./pages/TambahKoleksi";
 import LihatKoleksi from "./pages/LihatKoleksi";
 import EditKoleksi from "./pages/EditKoleksi";
 import Feedbacks from "./pages/Feedbacks";
+import AllFeedbacks from "./pages/AllFeedbacks";
 import NotFound from "./pages/NotFound";
 
 // Create a client
@@ -29,6 +30,7 @@ const App = () => {
               <Route path="/lihat-koleksi" element={<LihatKoleksi />} />
               <Route path="/edit-koleksi/:id" element={<EditKoleksi />} />
               <Route path="/feedbacks" element={<Feedbacks />} />
+              <Route path="/all-feedbacks" element={<AllFeedbacks />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
