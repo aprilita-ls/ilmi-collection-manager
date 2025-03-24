@@ -5,7 +5,8 @@ import {
   Upload, 
   CheckCircle2,
   ArrowLeft,
-  FilePenIcon
+  FilePenIcon,
+  Save
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/card';
@@ -15,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 // Mock data for collections
 const mockCollections = [
@@ -58,6 +60,7 @@ const EditKoleksi = () => {
   const [existingFileName, setExistingFileName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   
   const { toast } = useToast();
 
@@ -106,13 +109,21 @@ const EditKoleksi = () => {
     
     // Simulate API call
     setTimeout(() => {
+      // Show success toast
       toast({
         title: "Koleksi berhasil diperbarui!",
         description: `${title} telah berhasil diperbarui.`,
       });
       
+      // Show success alert
+      setShowSuccessAlert(true);
+      
+      // Auto-hide the alert after 5 seconds
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 5000);
+      
       setIsSubmitting(false);
-      navigate('/lihat-koleksi');
     }, 1500);
   };
 
@@ -158,6 +169,16 @@ const EditKoleksi = () => {
             <FilePenIcon className="w-6 h-6 text-daarul-blue" />
           </div>
         </div>
+        
+        {showSuccessAlert && (
+          <Alert className="mb-6 border-green-200 bg-green-50">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <AlertTitle className="text-green-800">Berhasil!</AlertTitle>
+            <AlertDescription className="text-green-700">
+              Koleksi {title} telah berhasil diperbarui.
+            </AlertDescription>
+          </Alert>
+        )}
         
         <Card className="p-6 border border-gray-200">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -307,6 +328,7 @@ const EditKoleksi = () => {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Memperbarui...' : 'Perbarui Koleksi'}
+                {!isSubmitting && <Save className="ml-1 h-4 w-4" />}
               </Button>
             </div>
           </form>
