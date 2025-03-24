@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Upload, 
   CheckCircle2,
@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { addCollection } from '@/utils/collectionUtils';
 
 interface FileTypeConfig {
   accept: string;
@@ -42,7 +43,7 @@ const categoryFileTypes: Record<string, FileTypeConfig> = {
 
 const TambahKoleksi = () => {
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('video');
+  const [category, setCategory] = useState<"video" | "audio" | "hadist">('video');
   const [summary, setSummary] = useState('');
   const [presenter, setPresenter] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -50,6 +51,7 @@ const TambahKoleksi = () => {
   const [fileError, setFileError] = useState<string | null>(null);
   
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Update file validation when category changes
   useEffect(() => {
@@ -107,8 +109,19 @@ const TambahKoleksi = () => {
     // Submit logic
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    // Add the collection to storage
+    try {
+      const fileUrl = URL.createObjectURL(file);
+      
+      // Add to collection
+      addCollection({
+        title,
+        category,
+        presenter,
+        summary,
+        fileUrl: file.name, // In a real app, we'd use the actual uploaded file URL
+      });
+      
       toast({
         title: "Koleksi berhasil ditambahkan!",
         description: `${title} telah berhasil ditambahkan ke koleksi.`,
@@ -120,8 +133,20 @@ const TambahKoleksi = () => {
       setSummary('');
       setPresenter('');
       setFile(null);
+      
+      // Redirect to the view collections page
+      setTimeout(() => {
+        navigate('/lihat-koleksi');
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Gagal menambahkan koleksi",
+        description: "Terjadi kesalahan saat menambahkan koleksi.",
+        variant: "destructive"
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,7 +209,7 @@ const TambahKoleksi = () => {
                 <Label>Kategori</Label>
                 <RadioGroup 
                   value={category} 
-                  onValueChange={setCategory}
+                  onValueChange={(value) => setCategory(value as "video" | "audio" | "hadist")}
                   className="flex flex-wrap gap-6 mt-2"
                 >
                   <div className="flex items-center space-x-2">
@@ -253,7 +278,7 @@ const TambahKoleksi = () => {
                   ) : (
                     <label className="flex flex-col items-center cursor-pointer">
                       <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium">Click to upload or drag and drop</span>
+                      <span className="text-sm font-medium">Klik untuk upload atau drag and drop</span>
                       <span className="text-xs text-gray-500 mt-1">
                         {getFileTypeDescription()}
                       </span>

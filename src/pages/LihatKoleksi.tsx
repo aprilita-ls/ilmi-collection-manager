@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Edit, 
@@ -23,75 +23,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-// Mock data for collections
-const mockCollections = [
-  {
-    id: 1,
-    title: "Dasar-dasar Fiqih untuk Pemula",
-    category: "video",
-    presenter: "Ustadz Ahmad Firdaus",
-    summary: "Pengenalan dasar hukum Islam untuk pemula dengan pendekatan praktis",
-    fileUrl: "video1.mp4",
-    createdAt: "2023-03-15T08:30:00",
-  },
-  {
-    id: 2,
-    title: "Kajian Hadits Arba'in An-Nawawi",
-    category: "audio",
-    presenter: "Ustadz Muhammad Rizki",
-    summary: "Pembahasan lengkap tentang 40 hadits pilihan dalam kitab Arba'in An-Nawawi",
-    fileUrl: "audio1.mp3",
-    createdAt: "2023-03-17T10:15:00",
-  },
-  {
-    id: 3,
-    title: "Shahih Bukhari: Hadits ke-1",
-    category: "hadist",
-    presenter: "Ustadz Zainuddin",
-    summary: "Penjelasan mendetail tentang hadits pertama dalam kitab Shahih Bukhari",
-    fileUrl: "hadist1.txt",
-    createdAt: "2023-03-19T09:45:00",
-  },
-  {
-    id: 4,
-    title: "Sirah Nabawiyah: Kelahiran Rasulullah",
-    category: "video",
-    presenter: "Ustadzah Fatimah",
-    summary: "Kisah detil tentang kelahiran dan masa kecil Rasulullah SAW",
-    fileUrl: "video2.mp4",
-    createdAt: "2023-03-20T14:30:00",
-  },
-  {
-    id: 5,
-    title: "Tafsir Surah Al-Fatihah",
-    category: "audio",
-    presenter: "Ustadz Abdullah",
-    summary: "Pembahasan mendalam tentang makna dan tafsir surah Al-Fatihah",
-    fileUrl: "audio2.mp3",
-    createdAt: "2023-03-22T16:00:00",
-  },
-  {
-    id: 6,
-    title: "Shahih Muslim: Hadits Pilihan",
-    category: "hadist",
-    presenter: "Ustadz Hasan",
-    summary: "Kumpulan hadits-hadits pilihan dari kitab Shahih Muslim dengan penjelasan",
-    fileUrl: "hadist2.txt",
-    createdAt: "2023-03-25T11:30:00",
-  },
-];
+import { Collection, getCollections, deleteCollection } from '@/utils/collectionUtils';
 
 const LihatKoleksi = () => {
-  const [collections, setCollections] = useState(mockCollections);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   
   const { toast } = useToast();
 
+  // Load collections from localStorage
+  useEffect(() => {
+    const loadedCollections = getCollections();
+    setCollections(loadedCollections);
+  }, []);
+
   const handleDelete = (id: number) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus koleksi ini?')) {
+      // Delete from localStorage
+      deleteCollection(id);
+      
+      // Update state
       setCollections(collections.filter(collection => collection.id !== id));
+      
       toast({
         title: "Koleksi dihapus",
         description: "Koleksi telah berhasil dihapus.",
@@ -144,6 +98,55 @@ const LihatKoleksi = () => {
         return '';
     }
   };
+
+  // Function to render a collection card
+  const renderCollectionCard = (collection: Collection) => (
+    <Card key={collection.id} className="p-4 hover:shadow-md transition-shadow">
+      <div className="flex flex-col md:flex-row justify-between gap-4">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            {getCategoryIcon(collection.category)}
+            <span className="text-sm text-gray-500 font-medium">
+              {getCategoryLabel(collection.category)}
+            </span>
+          </div>
+          <h3 className="text-lg font-semibold">{collection.title}</h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Pemateri: {collection.presenter}
+          </p>
+          <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+            {collection.summary}
+          </p>
+          <p className="text-xs text-gray-400 mt-2">
+            Ditambahkan pada {formatDate(collection.createdAt)}
+          </p>
+        </div>
+        
+        <div className="flex md:flex-col justify-end gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+            asChild
+          >
+            <Link to={`/edit-koleksi/${collection.id}`}>
+              <Edit className="h-4 w-4 mr-1" />
+              Edit
+            </Link>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="text-red-600 border-red-200 hover:bg-red-50"
+            onClick={() => handleDelete(collection.id)}
+          >
+            <Trash2 className="h-4 w-4 mr-1" />
+            Hapus
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
 
   return (
     <DashboardLayout>
@@ -209,53 +212,7 @@ const LihatKoleksi = () => {
           <TabsContent value="all" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
-                filteredCollections.map((collection) => (
-                  <Card key={collection.id} className="p-4 hover:shadow-md transition-shadow">
-                    <div className="flex flex-col md:flex-row justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          {getCategoryIcon(collection.category)}
-                          <span className="text-sm text-gray-500 font-medium">
-                            {getCategoryLabel(collection.category)}
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-semibold">{collection.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Pemateri: {collection.presenter}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                          {collection.summary}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          Ditambahkan pada {formatDate(collection.createdAt)}
-                        </p>
-                      </div>
-                      
-                      <div className="flex md:flex-col justify-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                          asChild
-                        >
-                          <Link to={`/edit-koleksi/${collection.id}`}>
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
-                          </Link>
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-600 border-red-200 hover:bg-red-50"
-                          onClick={() => handleDelete(collection.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Hapus
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))
+                filteredCollections.map(renderCollectionCard)
               ) : (
                 <div className="text-center py-10 bg-gray-50 rounded-lg">
                   <p className="text-gray-500">Tidak ada koleksi yang ditemukan</p>
@@ -268,54 +225,7 @@ const LihatKoleksi = () => {
           <TabsContent value="video" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
-                filteredCollections.map((collection) => (
-                  <Card key={collection.id} className="p-4 hover:shadow-md transition-shadow">
-                    {/* Same card content as above */}
-                    <div className="flex flex-col md:flex-row justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <FilmIcon className="w-5 h-5 text-blue-500" />
-                          <span className="text-sm text-gray-500 font-medium">
-                            Video
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-semibold">{collection.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Pemateri: {collection.presenter}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                          {collection.summary}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          Ditambahkan pada {formatDate(collection.createdAt)}
-                        </p>
-                      </div>
-                      
-                      <div className="flex md:flex-col justify-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                          asChild
-                        >
-                          <Link to={`/edit-koleksi/${collection.id}`}>
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
-                          </Link>
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-600 border-red-200 hover:bg-red-50"
-                          onClick={() => handleDelete(collection.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Hapus
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))
+                filteredCollections.map(renderCollectionCard)
               ) : (
                 <div className="text-center py-10 bg-gray-50 rounded-lg">
                   <p className="text-gray-500">Tidak ada video yang ditemukan</p>
@@ -328,54 +238,7 @@ const LihatKoleksi = () => {
           <TabsContent value="audio" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
-                filteredCollections.map((collection) => (
-                  <Card key={collection.id} className="p-4 hover:shadow-md transition-shadow">
-                    {/* Similar content as above but for audio */}
-                    <div className="flex flex-col md:flex-row justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <MusicIcon className="w-5 h-5 text-green-500" />
-                          <span className="text-sm text-gray-500 font-medium">
-                            Audio
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-semibold">{collection.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Pemateri: {collection.presenter}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                          {collection.summary}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          Ditambahkan pada {formatDate(collection.createdAt)}
-                        </p>
-                      </div>
-                      
-                      <div className="flex md:flex-col justify-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                          asChild
-                        >
-                          <Link to={`/edit-koleksi/${collection.id}`}>
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
-                          </Link>
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-600 border-red-200 hover:bg-red-50"
-                          onClick={() => handleDelete(collection.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Hapus
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))
+                filteredCollections.map(renderCollectionCard)
               ) : (
                 <div className="text-center py-10 bg-gray-50 rounded-lg">
                   <p className="text-gray-500">Tidak ada audio yang ditemukan</p>
@@ -388,54 +251,7 @@ const LihatKoleksi = () => {
           <TabsContent value="hadist" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
-                filteredCollections.map((collection) => (
-                  <Card key={collection.id} className="p-4 hover:shadow-md transition-shadow">
-                    {/* Similar content as above but for hadist */}
-                    <div className="flex flex-col md:flex-row justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <BookOpenIcon className="w-5 h-5 text-yellow-500" />
-                          <span className="text-sm text-gray-500 font-medium">
-                            Hadist
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-semibold">{collection.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Pemateri: {collection.presenter}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                          {collection.summary}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          Ditambahkan pada {formatDate(collection.createdAt)}
-                        </p>
-                      </div>
-                      
-                      <div className="flex md:flex-col justify-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                          asChild
-                        >
-                          <Link to={`/edit-koleksi/${collection.id}`}>
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
-                          </Link>
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-600 border-red-200 hover:bg-red-50"
-                          onClick={() => handleDelete(collection.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Hapus
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))
+                filteredCollections.map(renderCollectionCard)
               ) : (
                 <div className="text-center py-10 bg-gray-50 rounded-lg">
                   <p className="text-gray-500">Tidak ada hadist yang ditemukan</p>
