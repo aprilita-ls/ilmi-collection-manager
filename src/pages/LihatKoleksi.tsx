@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -32,7 +31,6 @@ const LihatKoleksi = () => {
   
   const { toast } = useToast();
 
-  // Load collections from localStorage
   useEffect(() => {
     const loadedCollections = getCollections();
     setCollections(loadedCollections);
@@ -40,10 +38,8 @@ const LihatKoleksi = () => {
 
   const handleDelete = (id: number) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus koleksi ini?')) {
-      // Delete from localStorage
       deleteCollection(id);
       
-      // Update state
       setCollections(collections.filter(collection => collection.id !== id));
       
       toast({
@@ -61,7 +57,6 @@ const LihatKoleksi = () => {
     return collection.category === activeTab && matchesSearch;
   });
 
-  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', {
@@ -71,7 +66,6 @@ const LihatKoleksi = () => {
     });
   };
 
-  // Category icon mapping
   const getCategoryIcon = (category: string) => {
     switch(category) {
       case 'video':
@@ -85,7 +79,6 @@ const LihatKoleksi = () => {
     }
   };
 
-  // Category label mapping
   const getCategoryLabel = (category: string) => {
     switch(category) {
       case 'video':
@@ -99,7 +92,6 @@ const LihatKoleksi = () => {
     }
   };
 
-  // Function to render a collection card
   const renderCollectionCard = (collection: Collection) => (
     <Card key={collection.id} className="p-4 hover:shadow-md transition-shadow">
       <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -221,7 +213,6 @@ const LihatKoleksi = () => {
             </div>
           </TabsContent>
           
-          {/* Video Tab */}
           <TabsContent value="video" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
@@ -234,7 +225,6 @@ const LihatKoleksi = () => {
             </div>
           </TabsContent>
           
-          {/* Audio Tab */}
           <TabsContent value="audio" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
@@ -247,7 +237,6 @@ const LihatKoleksi = () => {
             </div>
           </TabsContent>
           
-          {/* Hadist Tab */}
           <TabsContent value="hadist" className="mt-0">
             <div className="grid grid-cols-1 gap-4">
               {filteredCollections.length > 0 ? (
