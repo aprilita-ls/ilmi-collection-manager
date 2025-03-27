@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   FilmIcon, 
@@ -18,7 +19,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const Dashboard = () => {
-  // Mock data for statistics
+  // Mock data for statistics - reduced to only show Total Koleksi and Total Pengguna
   const stats = [
     { 
       title: 'Total Koleksi', 
@@ -27,22 +28,6 @@ const Dashboard = () => {
       isPositive: true,
       icon: <BookOpenIcon className="w-8 h-8 text-yellow-500" />,
       color: 'bg-yellow-50 border-yellow-100'
-    },
-    { 
-      title: 'Selesai', 
-      value: 77, 
-      change: 5, 
-      isPositive: true,
-      icon: <ThumbsUpIcon className="w-8 h-8 text-blue-500" />,
-      color: 'bg-blue-50 border-blue-100'
-    },
-    { 
-      title: 'Dilihat', 
-      value: 91, 
-      change: 8, 
-      isPositive: false,
-      icon: <EyeIcon className="w-8 h-8 text-pink-500" />,
-      color: 'bg-pink-50 border-pink-100'
     },
     { 
       title: 'Total Pengguna', 
@@ -79,7 +64,7 @@ const Dashboard = () => {
     }
   ];
 
-  // Quick action links - removed Edit Collection
+  // Quick action links
   const quickActions = [
     { 
       title: 'Tambah Koleksi', 
@@ -148,10 +133,10 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Statistics */}
+        {/* Statistics - Updated to only show Total Koleksi and Total Pengguna */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Statistik Pengunjung</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {stats.map((stat, index) => (
               <Card 
                 key={index} 
