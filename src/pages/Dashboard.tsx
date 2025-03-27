@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   FilmIcon, 
@@ -11,8 +10,7 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   PlusCircleIcon,
-  ListIcon,
-  PencilIcon
+  ListIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -81,7 +79,7 @@ const Dashboard = () => {
     }
   ];
 
-  // Quick action links
+  // Quick action links - removed Edit Collection
   const quickActions = [
     { 
       title: 'Tambah Koleksi', 
@@ -95,13 +93,6 @@ const Dashboard = () => {
       description: 'Kelola semua konten yang telah ditambahkan',
       icon: <ListIcon className="w-10 h-10 text-daarul-blue" />, 
       path: '/lihat-koleksi',
-      color: 'bg-blue-50'
-    },
-    { 
-      title: 'Edit Koleksi', 
-      description: 'Perbarui konten yang sudah ada',
-      icon: <PencilIcon className="w-10 h-10 text-daarul-blue" />, 
-      path: '/edit-koleksi',
       color: 'bg-blue-50'
     }
   ];
@@ -135,7 +126,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick action buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {quickActions.map((action, index) => (
             <Link 
               key={index} 

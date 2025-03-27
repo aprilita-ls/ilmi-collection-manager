@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, PlusCircle, List, Edit, Settings, LogOut, BarChart } from 'lucide-react';
+import { Home, PlusCircle, List, Settings, LogOut } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -10,8 +10,6 @@ const Sidebar = () => {
     { title: 'Dashboard', path: '/', icon: <Home className="w-5 h-5" /> },
     { title: 'Tambah Koleksi', path: '/tambah-koleksi', icon: <PlusCircle className="w-5 h-5" /> },
     { title: 'Lihat Koleksi', path: '/lihat-koleksi', icon: <List className="w-5 h-5" /> },
-    { title: 'Edit Koleksi', path: '/edit-koleksi', icon: <Edit className="w-5 h-5" /> },
-    { title: 'Statistik', path: '/statistics', icon: <BarChart className="w-5 h-5" /> },
     { title: 'Pengaturan', path: '/settings', icon: <Settings className="w-5 h-5" /> },
   ];
 
