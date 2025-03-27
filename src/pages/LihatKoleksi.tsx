@@ -7,7 +7,8 @@ import {
   FilmIcon,
   MusicIcon,
   BookOpenIcon,
-  SearchIcon
+  SearchIcon,
+  AlertTriangle
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/card';
@@ -22,12 +23,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Collection, getCollections, deleteCollection } from '@/utils/collectionUtils';
 
 const LihatKoleksi = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<number | null>(null);
   
   const { toast } = useToast();
 
@@ -36,16 +49,24 @@ const LihatKoleksi = () => {
     setCollections(loadedCollections);
   }, []);
 
-  const handleDelete = (id: number) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus koleksi ini?')) {
-      deleteCollection(id);
+  const handleDeleteClick = (id: number) => {
+    setCollectionToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (collectionToDelete !== null) {
+      deleteCollection(collectionToDelete);
       
-      setCollections(collections.filter(collection => collection.id !== id));
+      setCollections(collections.filter(collection => collection.id !== collectionToDelete));
       
       toast({
         title: "Koleksi dihapus",
         description: "Koleksi telah berhasil dihapus.",
       });
+      
+      setDeleteDialogOpen(false);
+      setCollectionToDelete(null);
     }
   };
 
@@ -130,7 +151,7 @@ const LihatKoleksi = () => {
             variant="outline" 
             size="sm"
             className="text-red-600 border-red-200 hover:bg-red-50"
-            onClick={() => handleDelete(collection.id)}
+            onClick={() => handleDeleteClick(collection.id)}
           >
             <Trash2 className="h-4 w-4 mr-1" />
             Hapus
@@ -250,6 +271,31 @@ const LihatKoleksi = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto bg-red-100 p-3 rounded-full mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
+            <AlertDialogTitle className="text-center">Konfirmasi Penghapusan</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Apakah Anda yakin ingin menghapus koleksi ini? 
+              <br />
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center justify-center space-x-2">
+            <AlertDialogCancel className="border-gray-200">Batal</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600" 
+              onClick={handleDeleteConfirm}
+            >
+              Ya, Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 };
