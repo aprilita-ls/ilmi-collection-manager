@@ -183,37 +183,39 @@ const TambahKoleksi = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-8 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-daarul-blue to-blue-600 bg-clip-text text-transparent">Tambah Koleksi</h1>
-            <p className="text-gray-500 mt-1">Tambahkan video, audio, atau hadist baru ke koleksi Daarul Ilmi</p>
+            <h1 className="text-3xl font-bold text-daarul-blue mb-2">Tambah Koleksi Baru</h1>
+            <p className="text-gray-600">Lengkapi informasi untuk menambahkan konten ke koleksi Daarul Ilmi</p>
           </div>
-          <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full shadow-sm">
-            <FilePenIcon className="w-6 h-6 text-daarul-blue" />
+          <div className="p-4 bg-blue-100 rounded-full">
+            <FilePenIcon className="w-8 h-8 text-daarul-blue" />
           </div>
         </div>
-        
-        <Card className="p-8 border border-gray-200 shadow-lg rounded-xl bg-gradient-to-br from-white to-blue-50">
+
+        {/* Main Form Container */}
+        <Card className="p-8 bg-white border-gray-100 shadow-lg rounded-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-8">
               {/* Left Column */}
               <div className="space-y-6">
                 <FormField 
-                  icon={<TypeIcon className="w-5 h-5 text-daarul-blue" />} 
-                  label="Judul"
+                  icon={<TypeIcon className="w-6 h-6 text-daarul-blue" />} 
+                  label="Judul Koleksi"
                 >
                   <Input 
                     value={title} 
                     onChange={(e) => setTitle(e.target.value)} 
                     placeholder="Masukkan judul koleksi" 
-                    className="border-gray-300 focus:border-blue-400 focus:ring-blue-300"
+                    className="border-gray-300 focus:border-daarul-blue focus:ring-daarul-blue/30"
                   />
                 </FormField>
                 
                 <FormField 
-                  icon={<RadioIcon className="w-5 h-5 text-daarul-blue" />} 
-                  label="Kategori"
+                  icon={<RadioIcon className="w-6 h-6 text-daarul-blue" />} 
+                  label="Pilih Kategori"
                 >
                   <CategorySelector 
                     value={category} 
@@ -222,14 +224,14 @@ const TambahKoleksi = () => {
                 </FormField>
                 
                 <FormField 
-                  icon={<UserIcon className="w-5 h-5 text-daarul-blue" />} 
-                  label="Pemateri"
+                  icon={<UserIcon className="w-6 h-6 text-daarul-blue" />} 
+                  label="Nama Pemateri"
                 >
                   <Input 
                     value={presenter} 
                     onChange={(e) => setPresenter(e.target.value)} 
                     placeholder="Masukkan nama pemateri" 
-                    className="border-gray-300 focus:border-blue-400 focus:ring-blue-300"
+                    className="border-gray-300 focus:border-daarul-blue focus:ring-daarul-blue/30"
                   />
                 </FormField>
               </div>
@@ -237,20 +239,20 @@ const TambahKoleksi = () => {
               {/* Right Column */}
               <div className="space-y-6">
                 <FormField 
-                  icon={<FileTextIcon className="w-5 h-5 text-daarul-blue" />} 
-                  label="Rangkuman"
+                  icon={<FileTextIcon className="w-6 h-6 text-daarul-blue" />} 
+                  label="Rangkuman Konten"
                 >
                   <Textarea 
                     value={summary} 
                     onChange={(e) => setSummary(e.target.value)} 
-                    placeholder="Masukkan rangkuman singkat tentang koleksi ini" 
-                    className="min-h-[150px] border-gray-300 focus:border-blue-400 focus:ring-blue-300"
+                    placeholder="Tuliskan rangkuman singkat tentang koleksi ini" 
+                    className="min-h-[180px] border-gray-300 focus:border-daarul-blue focus:ring-daarul-blue/30"
                   />
                 </FormField>
                 
                 <FormField 
-                  icon={<Upload className="w-5 h-5 text-daarul-blue" />} 
-                  label="Upload File"
+                  icon={<Upload className="w-6 h-6 text-daarul-blue" />} 
+                  label="Unggah File"
                 >
                   <FileUploadField
                     file={file}
@@ -264,13 +266,13 @@ const TambahKoleksi = () => {
               </div>
             </div>
             
-            <div className="flex justify-center pt-6">
+            <div className="flex justify-center pt-4">
               <Button 
                 type="submit" 
-                className="px-10 py-2.5 rounded-lg bg-gradient-to-r from-daarul-blue to-blue-600 hover:from-blue-600 hover:to-daarul-blue transition-all shadow-md hover:shadow-lg"
+                className="px-12 py-3 text-base rounded-xl bg-gradient-to-r from-daarul-blue to-blue-500 hover:from-blue-500 hover:to-daarul-blue transition-all duration-300 shadow-md hover:shadow-lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Koleksi'}
+                {isSubmitting ? 'Menyimpan...' : 'Simpan Koleksi'}
               </Button>
             </div>
           </form>
