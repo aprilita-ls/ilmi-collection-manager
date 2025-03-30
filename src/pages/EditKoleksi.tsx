@@ -7,7 +7,11 @@ import {
   FilePenIcon,
   AlertCircle,
   Save,
-  ArrowLeft
+  ArrowLeft,
+  TypeIcon,
+  UserIcon,
+  FileTextIcon,
+  RadioIcon
 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/card';
@@ -227,129 +231,170 @@ const EditKoleksi = () => {
           </div>
         </div>
         
-        <Card className="p-6 border border-gray-200">
+        <Card className="p-6 border border-gray-200 shadow-md bg-gradient-to-br from-white to-blue-50">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Judul</Label>
-                <Input 
-                  id="title" 
-                  value={title} 
-                  onChange={(e) => setTitle(e.target.value)} 
-                  placeholder="Masukkan judul koleksi" 
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label>Kategori</Label>
-                <RadioGroup 
-                  value={category} 
-                  onValueChange={(value) => setCategory(value as "video" | "audio" | "hadist")}
-                  className="flex flex-wrap gap-6 mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="video" id="video" />
-                    <Label htmlFor="video" className="cursor-pointer">Video</Label>
+            <div className="space-y-6">
+              <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full mt-1">
+                    <TypeIcon className="w-5 h-5 text-daarul-blue" />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="audio" id="audio" />
-                    <Label htmlFor="audio" className="cursor-pointer">Audio</Label>
+                  <div className="flex-1">
+                    <Label htmlFor="title" className="text-base font-medium">Judul</Label>
+                    <Input 
+                      id="title" 
+                      value={title} 
+                      onChange={(e) => setTitle(e.target.value)} 
+                      placeholder="Masukkan judul koleksi" 
+                      className="mt-1 border-gray-300 focus:border-blue-400 focus:ring-blue-300"
+                    />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="hadist" id="hadist" />
-                    <Label htmlFor="hadist" className="cursor-pointer">Hadist</Label>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full mt-1">
+                    <RadioIcon className="w-5 h-5 text-daarul-blue" />
                   </div>
-                </RadioGroup>
-              </div>
-              
-              <div>
-                <Label htmlFor="summary">Rangkuman</Label>
-                <Textarea 
-                  id="summary" 
-                  value={summary} 
-                  onChange={(e) => setSummary(e.target.value)} 
-                  placeholder="Masukkan rangkuman singkat tentang koleksi ini" 
-                  className="mt-1 min-h-[120px]"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="presenter">Pemateri</Label>
-                <Input 
-                  id="presenter" 
-                  value={presenter} 
-                  onChange={(e) => setPresenter(e.target.value)} 
-                  placeholder="Masukkan nama pemateri" 
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label>Upload File</Label>
-                {fileError && (
-                  <Alert variant="destructive" className="mb-3 py-2">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-sm">{fileError}</AlertDescription>
-                  </Alert>
-                )}
-                <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  {file ? (
-                    <div className="flex flex-col items-center">
-                      <CheckCircle2 className="h-8 w-8 text-green-500 mb-2" />
-                      <p className="text-sm font-medium">{file.name}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setFile(null)}
-                        className="mt-2 text-red-500 hover:text-red-700"
-                      >
-                        Hapus
-                      </Button>
-                    </div>
-                  ) : currentFileName ? (
-                    <div className="flex flex-col items-center">
-                      <CheckCircle2 className="h-8 w-8 text-green-500 mb-2" />
-                      <p className="text-sm font-medium">{currentFileName}</p>
-                      <p className="text-xs text-gray-500 mt-1">File saat ini</p>
-                      <div className="flex gap-2 mt-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="text-blue-500"
-                          onClick={() => document.getElementById('fileUpload')?.click()}
-                        >
-                          Ganti File
-                        </Button>
+                  <div className="flex-1">
+                    <Label className="text-base font-medium">Kategori</Label>
+                    <RadioGroup 
+                      value={category} 
+                      onValueChange={(value) => setCategory(value as "video" | "audio" | "hadist")}
+                      className="flex flex-wrap gap-6 mt-3"
+                    >
+                      <div className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors">
+                        <RadioGroupItem value="video" id="video" className="text-daarul-blue" />
+                        <Label htmlFor="video" className="cursor-pointer pl-2">Video</Label>
                       </div>
-                      <Input
-                        id="fileUpload"
-                        type="file"
-                        className="hidden"
-                        onChange={handleFileChange}
-                        accept={getAcceptedFileTypes()}
-                      />
+                      <div className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors">
+                        <RadioGroupItem value="audio" id="audio" className="text-daarul-blue" />
+                        <Label htmlFor="audio" className="cursor-pointer pl-2">Audio</Label>
+                      </div>
+                      <div className="flex items-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors">
+                        <RadioGroupItem value="hadist" id="hadist" className="text-daarul-blue" />
+                        <Label htmlFor="hadist" className="cursor-pointer pl-2">Hadist</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full mt-1">
+                    <FileTextIcon className="w-5 h-5 text-daarul-blue" />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="summary" className="text-base font-medium">Rangkuman</Label>
+                    <Textarea 
+                      id="summary" 
+                      value={summary} 
+                      onChange={(e) => setSummary(e.target.value)} 
+                      placeholder="Masukkan rangkuman singkat tentang koleksi ini" 
+                      className="mt-1 min-h-[120px] border-gray-300 focus:border-blue-400 focus:ring-blue-300"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full mt-1">
+                    <UserIcon className="w-5 h-5 text-daarul-blue" />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="presenter" className="text-base font-medium">Pemateri</Label>
+                    <Input 
+                      id="presenter" 
+                      value={presenter} 
+                      onChange={(e) => setPresenter(e.target.value)} 
+                      placeholder="Masukkan nama pemateri" 
+                      className="mt-1 border-gray-300 focus:border-blue-400 focus:ring-blue-300"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full mt-1">
+                    <Upload className="w-5 h-5 text-daarul-blue" />
+                  </div>
+                  <div className="flex-1">
+                    <Label className="text-base font-medium">Upload File</Label>
+                    {fileError && (
+                      <Alert variant="destructive" className="mb-3 py-2">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription className="text-sm">{fileError}</AlertDescription>
+                      </Alert>
+                    )}
+                    <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                      {file ? (
+                        <div className="flex flex-col items-center">
+                          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2">
+                            <CheckCircle2 className="h-8 w-8 text-green-500" />
+                          </div>
+                          <p className="text-sm font-medium">{file.name}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setFile(null)}
+                            className="mt-2 text-red-500 hover:text-red-700"
+                          >
+                            Hapus
+                          </Button>
+                        </div>
+                      ) : currentFileName ? (
+                        <div className="flex flex-col items-center">
+                          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2">
+                            <CheckCircle2 className="h-8 w-8 text-green-500" />
+                          </div>
+                          <p className="text-sm font-medium">{currentFileName}</p>
+                          <p className="text-xs text-gray-500 mt-1">File saat ini</p>
+                          <div className="flex gap-2 mt-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="text-blue-500 border-blue-200 hover:bg-blue-50"
+                              onClick={() => document.getElementById('fileUpload')?.click()}
+                            >
+                              Ganti File
+                            </Button>
+                          </div>
+                          <Input
+                            id="fileUpload"
+                            type="file"
+                            className="hidden"
+                            onChange={handleFileChange}
+                            accept={getAcceptedFileTypes()}
+                          />
+                        </div>
+                      ) : (
+                        <label className="flex flex-col items-center cursor-pointer">
+                          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                            <Upload className="h-8 w-8 text-daarul-blue" />
+                          </div>
+                          <span className="text-sm font-medium">Klik untuk upload atau drag and drop</span>
+                          <span className="text-xs text-gray-500 mt-1">
+                            {getFileTypeDescription()}
+                          </span>
+                          <Input 
+                            type="file" 
+                            className="hidden" 
+                            onChange={handleFileChange}
+                            accept={getAcceptedFileTypes()}
+                          />
+                        </label>
+                      )}
                     </div>
-                  ) : (
-                    <label className="flex flex-col items-center cursor-pointer">
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium">Klik untuk upload atau drag and drop</span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        {getFileTypeDescription()}
-                      </span>
-                      <Input 
-                        type="file" 
-                        className="hidden" 
-                        onChange={handleFileChange}
-                        accept={getAcceptedFileTypes()}
-                      />
-                    </label>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -359,7 +404,7 @@ const EditKoleksi = () => {
                 type="button" 
                 variant="outline"
                 onClick={() => navigate('/lihat-koleksi')}
-                className="px-6 flex items-center gap-2"
+                className="px-6 flex items-center gap-2 border-gray-300 hover:bg-gray-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Kembali
@@ -367,7 +412,7 @@ const EditKoleksi = () => {
               
               <Button 
                 type="submit" 
-                className="px-6 flex items-center gap-2"
+                className="px-8 py-2 rounded-lg bg-daarul-blue hover:bg-blue-600 transition-colors flex items-center gap-2"
                 disabled={isSubmitting}
               >
                 <Save className="h-4 w-4" />
