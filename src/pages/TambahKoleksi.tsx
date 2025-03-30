@@ -183,7 +183,7 @@ const TambahKoleksi = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto px-4 space-y-6">
         {/* Page Header */}
         <div className="flex items-center justify-between bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-sm">
           <div>
@@ -198,9 +198,9 @@ const TambahKoleksi = () => {
         {/* Main Form Container */}
         <Card className="p-8 bg-white border-gray-100 shadow-lg rounded-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-8 w-full">
               {/* Left Column */}
-              <div className="space-y-6">
+              <div className="space-y-6 w-full">
                 <FormField 
                   icon={<TypeIcon className="w-6 h-6 text-daarul-blue" />} 
                   label="Judul Koleksi"
@@ -237,7 +237,7 @@ const TambahKoleksi = () => {
               </div>
               
               {/* Right Column */}
-              <div className="space-y-6">
+              <div className="space-y-6 w-full">
                 <FormField 
                   icon={<FileTextIcon className="w-6 h-6 text-daarul-blue" />} 
                   label="Rangkuman Konten"
